@@ -4,6 +4,42 @@
 -->
 <project name="kotlinnature_buildcallbacks">
 
+    <target name="kotlinnature_extension_compile_register" description="Register kotlinnature in the compiling.xml">
+        <replace file="${platformhome}/resources/ant/compiling.xml">
+            <replacetoken><![CDATA[<extension_compile_web extname="@{extname}" />]]></replacetoken>
+            <replacevalue><![CDATA[<extension_compile_web extname="@{extname}"/>
+            <kotlinnature_compile_web extname="@{extname}"/>]]></replacevalue>
+        </replace>
+        <replace file="${platformhome}/resources/ant/compiling.xml">
+            <replacetoken><![CDATA[<extension_compile_core extname="@{extname}" />]]></replacetoken>
+            <replacevalue><![CDATA[<extension_compile_core extname="@{extname}"/>
+            <kotlinnature_compile_core extname="@{extname}"/>]]></replacevalue>
+        </replace>
+
+        <replace file="${ext.kotlinnature.path}/project.properties">
+            <replacetoken><![CDATA[kotlinnature.extension_compile.extended=false]]></replacetoken>
+            <replacevalue><![CDATA[kotlinnature.extension_compile.extended=true]]></replacevalue>
+        </replace>
+    </target>
+
+    <target name="kotlinnature_extension_compile_unregister" description="Unregister kotlinnature in the compiling.xml">
+        <replace file="${platformhome}/resources/ant/compiling.xml">
+            <replacetoken><![CDATA[<extension_compile_web extname="@{extname}"/>
+            <kotlinnature_compile_web extname="@{extname}"/>]]></replacetoken>
+            <replacevalue><![CDATA[<extension_compile_web extname="@{extname}" />]]></replacevalue>
+        </replace>
+        <replace file="${platformhome}/resources/ant/compiling.xml">
+            <replacetoken><![CDATA[<extension_compile_core extname="@{extname}"/>
+            <kotlinnature_compile_core extname="@{extname}"/>]]></replacetoken>
+            <replacevalue><![CDATA[<extension_compile_core extname="@{extname}" />]]></replacevalue>
+        </replace>
+
+        <replace file="${ext.kotlinnature.path}/project.properties">
+            <replacetoken><![CDATA[kotlinnature.extension_compile.extended=true]]></replacetoken>
+            <replacevalue><![CDATA[kotlinnature.extension_compile.extended=false]]></replacevalue>
+        </replace>
+    </target>
+
     <macrodef name="kotlinnature_before_build">
         <sequential>
             <mkdir dir="${ext.kotlinnature.path}/lib"/>
@@ -79,27 +115,26 @@
         </sequential>
     </macrodef>
 
-    <macrodef name="kotlinnature_after_build">
-        <sequential>
-            <kotlinnature_compile_core extname="@{extname}"/>
-            <kotlinnature_compile_web extname="@{extname}"/>
-        </sequential>
-    </macrodef>
-
     <macrodef name="_after_build">
         <sequential>
-            <build_kotlinnature/>
+            <if>
+                <isfalse value="${kotlinnature.extension_compile.extended}"/>
+                <then>
+                    <foreachext>
+                        <do>
+                            <build_kotlinnature extname="@{extname}"/>
+                        </do>
+                    </foreachext>
+                </then>
+            </if>
         </sequential>
     </macrodef>
 
     <macrodef name="build_kotlinnature">
+        <attribute name="extname"/>
         <sequential>
-            <foreachext>
-                <do>
-                    <kotlinnature_compile_core extname="@{extname}"/>
-                    <kotlinnature_compile_web extname="@{extname}"/>
-                </do>
-            </foreachext>
+            <kotlinnature_compile_core extname="@{extname}"/>
+            <kotlinnature_compile_web extname="@{extname}"/>
         </sequential>
     </macrodef>
 
@@ -110,6 +145,11 @@
         <attribute name="srcdir"/>
         <attribute name="extname"/>
         <sequential>
+            <echo message="COMPILE KOTLIN"/>
+            <echo message="COMPILE KOTLIN"/>
+            <echo message="COMPILE KOTLIN"/>
+            <echo message="COMPILE KOTLIN"/>
+            <echo message="COMPILE KOTLIN"/>
             <if>
                 <available file="@{srcdir}" type="dir"/>
                 <then>
