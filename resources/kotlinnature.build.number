@@ -1,0 +1,11 @@
+#Ant properties
+#Tue Jan 17 14:47:43 CET 2023
+version.api=2211
+vendor=hybris
+group.id=de.hybris.platform
+name=kotlinnature
+description=kotlinnature
+builddate=20230117 1447
+releasedate=20221109 1322
+version=2211.2
+module.name=platform-module
