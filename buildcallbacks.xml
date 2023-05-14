@@ -145,11 +145,6 @@
         <attribute name="srcdir"/>
         <attribute name="extname"/>
         <sequential>
-            <echo message="COMPILE KOTLIN"/>
-            <echo message="COMPILE KOTLIN"/>
-            <echo message="COMPILE KOTLIN"/>
-            <echo message="COMPILE KOTLIN"/>
-            <echo message="COMPILE KOTLIN"/>
             <if>
                 <available file="@{srcdir}" type="dir"/>
                 <then>
