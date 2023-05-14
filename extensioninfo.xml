@@ -6,7 +6,7 @@
 
     <extension abstractclassprefix="Generated" classprefix="Kotlinnature" jaloLogicFree="true"
                managername="KotlinnatureManager" managersuperclass="de.hybris.platform.jalo.extension.Extension"
-               name="kotlinnature" usemaven="true" >
+               name="kotlinnature" usemaven="false">
 
         <coremodule generated="true" manager="com.github.mlytvyn.sap.commerce.kotlinnature.jalo.KotlinnatureManager"
                     packageroot="com.github.mlytvyn.sap.commerce.kotlinnature"/>

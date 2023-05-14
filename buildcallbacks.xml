@@ -4,4 +4,207 @@
 -->
 <project name="kotlinnature_buildcallbacks">
 
+    <macrodef name="kotlinnature_before_build">
+        <sequential>
+            <mkdir dir="${ext.kotlinnature.path}/lib"/>
+
+            <if>
+                <not>
+                    <available file="${ext.kotlinnature.path}/lib/kotlin-ant.jar"/>
+                </not>
+                <then>
+                    <delete includeemptydirs="true" failonerror="false">
+                        <fileset dir="${ext.kotlinnature.path}/lib" includes="**/*"/>
+                    </delete>
+
+                    <if>
+                        <isset property="kotlinnature.compiler.version"/>
+                        <then>
+                            <property name="kotlinc.version" value="${kotlinnature.compiler.version}"/>
+                        </then>
+                        <else>
+                            <property name="kotlinc.version" value="1.8.21"/>
+                        </else>
+                    </if>
+
+                    <get src="https://github.com/JetBrains/kotlin/releases/download/v${kotlinc.version}/kotlin-compiler-${kotlinc.version}.zip"
+                         dest="${ext.kotlinnature.path}/lib/kotlin-compiler.zip"/>
+
+                    <unzip src="${ext.kotlinnature.path}/lib/kotlin-compiler.zip"
+                           dest="${ext.kotlinnature.path}/lib/"
+                           failOnEmptyArchive="true" overwrite="true">
+                        <cutdirsmapper dirs="1"/>
+                    </unzip>
+
+                    <move todir="${ext.kotlinnature.path}/lib">
+                        <fileset dir="${ext.kotlinnature.path}/lib/lib"/>
+                    </move>
+
+                    <delete includeemptydirs="true" failonerror="false">
+                        <fileset dir="${ext.kotlinnature.path}/lib">
+                            <include name="bin/**/*"/>
+                            <include name="bin"/>
+                            <include name="lib"/>
+                            <include name="build.txt"/>
+                            <!-- remove downloaded zip archive -->
+                            <include name="allopen*.jar"/>
+                            <include name="android*.jar"/>
+                            <include name="assignment-compiler-plugin.jar"/>
+                            <include name="js.engines.jar"/>
+                            <include name="jvm-abi-gen.jar"/>
+                            <include name="kotlin-annotation*.jar"/>
+                            <include name="kotlin-daemon.jar"/>
+                            <include name="kotlin-daemon-client.jar"/>
+                            <include name="kotlin-imports-dumper-compiler-plugin.jar"/>
+                            <include name="kotlin-main-kts.jar"/>
+                            <include name="kotlin-runner.jar"/>
+                            <include name="kotlin-test-js*.jar"/>
+                            <include name="sam-with-receiver-compiler-plugin.jar"/>
+                            <include name="parcelize-*.jar"/>
+                            <include name="noarg-compiler-plugin.jar"/>
+                            <include name="mutability-annotations-compat.jar"/>
+                            <include name="lombok-compiler-plugin.jar"/>
+                            <include name="kotlin-test-junit5.jar"/>
+                            <include name="kotlin-test-testng.jar"/>
+                            <include name="*-sources.jar"/>
+                            <!-- remove downloaded zip archive -->
+                            <include name="kotlin-compiler.zip"/>
+                            <!-- do not remove license -->
+                            <!-- <include name="license/**/*"/>-->
+                            <!-- <include name="license"/>-->
+                        </fileset>
+                    </delete>
+                </then>
+            </if>
+        </sequential>
+    </macrodef>
+
+    <macrodef name="kotlinnature_after_build">
+        <sequential>
+            <kotlinnature_compile_core extname="@{extname}"/>
+            <kotlinnature_compile_web extname="@{extname}"/>
+        </sequential>
+    </macrodef>
+
+    <macrodef name="_after_build">
+        <sequential>
+            <build_kotlinnature/>
+        </sequential>
+    </macrodef>
+
+    <macrodef name="build_kotlinnature">
+        <sequential>
+            <foreachext>
+                <do>
+                    <kotlinnature_compile_core extname="@{extname}"/>
+                    <kotlinnature_compile_web extname="@{extname}"/>
+                </do>
+            </foreachext>
+        </sequential>
+    </macrodef>
+
+    <macrodef name="kotlin_compile">
+        <element name="additionalclasspath" optional="true"/>
+        <attribute name="memoryMaximumSize" default="64m"/>
+        <attribute name="destdir"/>
+        <attribute name="srcdir"/>
+        <attribute name="extname"/>
+        <sequential>
+            <if>
+                <available file="@{srcdir}" type="dir"/>
+                <then>
+                    <if>
+                        <isset property="@{extname}.kotlinc.fork"/>
+                        <then>
+                            <property name="@{extname}.fork" value="${@{extname}.kotlinc.fork}"/>
+                        </then>
+                        <elseif>
+                            <isset property="kotlinc.fork"/>
+                            <then>
+                                <property name="@{extname}.fork" value="${kotlinc.fork}"/>
+                            </then>
+                        </elseif>
+                        <else>
+                            <property name="@{extname}.fork" value="true"/>
+                        </else>
+                    </if>
+                    <mkdir dir="@{destdir}"/>
+
+                    <taskdef name="kotlinc" classname="org.jetbrains.kotlin.ant.Kotlin2JvmTask">
+                        <classpath>
+                            <fileset dir="${ext.kotlinnature.path}/lib">
+                                <include name="*.jar"/>
+                            </fileset>
+                        </classpath>
+                    </taskdef>
+
+                    <kotlinc moduleName="@{extname}" src="@{srcdir}" fork="${@{extname}.fork}" output="@{destdir}"
+                             verbose="${build.verbose}" failOnError="true">
+                        <classpath>
+                            <additionalclasspath/>
+                            <fileset dir="${ext.@{extname}.path}">
+                                <include name="${ext.@{extname}.additional.src.dir}/**/*.class"/>
+                                <include name="${ext.@{extname}.additional.testsrc.dir}/**/*.class"/>
+                                <include name="${ext.@{extname}.additional.websrc.dir}/**/*.class"/>
+                                <include name="${ext.@{extname}.additional.webtestsrc.dir}/**/*.class"/>
+                            </fileset>
+                            <pathelement path="${build.classpath}"/>
+                            <pathelement path="${HYBRIS_BOOTSTRAP_BIN_DIR}/models.jar"/>
+                            <fileset dir="${bundled.tomcat.home}">
+                                <include name="lib/*.jar"/>
+                            </fileset>
+                            <pathelement path="${HYBRIS_TEMP_DIR}/log4j"/>
+                            <pathelement path="${ext.@{extname}.classpath}"/>
+                            <!-- for the log4j stuff -->
+                        </classpath>
+                    </kotlinc>
+                </then>
+            </if>
+        </sequential>
+    </macrodef>
+
+    <macrodef name="kotlinnature_compile_core">
+        <attribute name="extname"/>
+        <sequential>
+            <if>
+                <isset property="ext.@{extname}.coremodule.available"/>
+                <then>
+                    <if>
+                        <istrue value="${ext.@{extname}.extension.coremodule.sourceavailable}"/>
+                        <then>
+                            <kotlin_compile srcdir="${ext.@{extname}.path}/kotlinsrc"
+                                            destdir="${ext.@{extname}.path}/classes"
+                                            extname="@{extname}"/>
+                            <kotlin_compile srcdir="${ext.@{extname}.path}/kotlintestsrc"
+                                            destdir="${ext.@{extname}.path}/classes"
+                                            extname="@{extname}"/>
+                        </then>
+                    </if>
+                </then>
+            </if>
+        </sequential>
+    </macrodef>
+
+    <macrodef name="kotlinnature_compile_web">
+        <attribute name="extname"/>
+        <sequential>
+            <if>
+                <isset property="ext.@{extname}.webmodule.available"/>
+                <then>
+                    <if>
+                        <istrue value="${ext.@{extname}.extension.webmodule.sourceavailable}"/>
+                        <then>
+                            <kotlin_compile srcdir="${ext.@{extname}.path}/web/kotlinsrc"
+                                            destdir="${ext.@{extname}.path}/web/webroot/WEB-INF/classes"
+                                            extname="@{extname}"/>
+                            <kotlin_compile srcdir="${ext.@{extname}.path}/web/kotlintestsrc"
+                                            destdir="${ext.@{extname}.path}/web/webroot/WEB-INF/classes"
+                                            extname="@{extname}"/>
+                        </then>
+                    </if>
+                </then>
+            </if>
+        </sequential>
+    </macrodef>
+
 </project>
