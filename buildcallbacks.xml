@@ -256,7 +256,6 @@ In this mode Kotlin classes will have visibility to Java classes and vice-versa
             <if>
                 <equals arg1="${kotlinnature.compiler.mode}" arg2=""/>
                 <then>
-                    <echo message="AAAAA"/>
                     <kotlinnature_compile_mode mode="compiler_adapter"/>
                 </then>
             </if>
