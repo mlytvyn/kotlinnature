@@ -22,41 +22,39 @@ It is possible to change version of Kotlin compiler via `local.properties` witho
 the `kotlinnature` extension. Kotlin compiler will be automatically downloaded from the JetBrains GitHub,
 if `kotlin-ant.jar` is not present in the `kotlinnature/lib` directory.
 
-**Important note**:
-> modification of the OOTB SAP Commerce files is considered as not the best practice, which may affect migration or
-> upgrade. Following that statement `kotlinnature` extension is not automatically injected into the
-> Platform's `compiling.xml` and it was done on purpose.
->
-> If modification of the OOTB files is acceptable, `kotlinnature` extension is shipped with two special Ant targets to
-_register_ and _unregister_ itself in the `compiling.xml` file.
-
 ### Available targets
 
-| Target                                      | Description                                                                                                                                                                                                |
-|---------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `kotlinnature_extension_compile_register`   | build target which will extend OOTB `extension_compile` macro in `compiling.xml` file with compilation of Kotlin source code,<br>it will also set flag `kotlinnature.extension_compile.extended` to `true` |
-| `kotlinnature_extension_compile_unregister` | build target which will revert changes applied by `kotlinnature_extension_compile_register`                                                                                                                |
+#### `kotlinnature_compile_mode`
+
+This build target provides possibility to adjust how `kotlinnature` compilation will be done and injected into the Platform.
+
+| Mode                | Description                                                                                                                                                                                                   |
+|---------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `compiler_adapter`  | This mode will be set if current mode is `<blank>`. This mode changes `YJavaC` to `javac` and adds Kotline Compiler Adapter. In this mode Kotlin classes will have visibility to Java classes and vice-versa  |
+| `after_ext_compile` | Alternative compilation mode, similar to OOTB Groovy compilation. It will compile Kotlin classes after compilation of the Java classes. In this mode only Kotlin classes will have visibility to Java classes |
+| `uninstall`         | Special mode, which will undo any modifications to OOTB files (`compiling.xml`, `antmacros.xml`, `util.xml`)                                                                                                  |
+| `<blank>`           | No value, initial state. Indicates that there are no changes to OOTB files.                                                                                                                                   |
 
 ### Available macrodefs
 
 **Note**: below macros will be invoked automatically (no need to make it manually)
 
-| Macro                       | Description                                                                                                                                                                       |
-|-----------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `kotlinnature_before_build` | macro which will download Kotlin compiler dependencies if `kotlinnature/lib/kotlin-ant.jar` is missing                                                                            |
-| `kotlin_compile`            | macro for compiling Kotlin source files                                                                                                                                           |
-| `kotlinnature_compile_core` | invokes `kotlin_compile` on core source files                                                                                                                                     |
-| `kotlinnature_compile_web`  | invokes `kotlin_compile` on web source files                                                                                                                                      |
-| `_after_build`              | invokes Kotlin source files compilation after the build, if executed from the `bin/platform` directory,<br>will not be executed if `kotlinnature.extension_compile.extended=true` |
+| Macro                       | Description                                                                                                       |
+|-----------------------------|-------------------------------------------------------------------------------------------------------------------|
+| `kotlinnature_before_build` | macro which will download Kotlin compiler dependencies if `kotlinnature/lib/kotlin-ant.jar` is missing            |
+| `kotlin_compile`            | macro for compiling Kotlin source files                                                                           |
+| `kotlinnature_compile_core` | invokes `kotlin_compile` on core source files                                                                     |
+| `kotlinnature_compile_web`  | invokes `kotlin_compile` on web source files                                                                      |
+| `_before_build`             | initialize `kotlinnature` extension by invoking `kotlinnature_compile_mode` to register of the Kotlin compilation |
 
 ### Available properties
 
-| Property                                  | Default    | Description                                                                                                                      |
-|-------------------------------------------|------------|----------------------------------------------------------------------------------------------------------------------------------|
-| `kotlinnature.compiler.version`           | **1.8.21** | must point to valid Kotlin compiler release version<br>- releases can be found here https://github.com/JetBrains/kotlin/releases |
-| `kotlinc.fork`                            | **false**  | if set to **true** will Fork new process for Kotlin compilation                                                                  |
-| `<ext>.kotlinc.fork`                      |            | enables extension specific `kotlin.fork` property                                                                                |
-| `kotlinnature.extension_compile.extended` | **false**  | internal flag, which indicates that `kotlinnature` has been registered in `compiling.xml`                                        |
+| Property                        | Default    | Description                                                                                                                      |
+|---------------------------------|------------|----------------------------------------------------------------------------------------------------------------------------------|
+| `kotlinnature.compiler.version` | **1.8.21** | must point to valid Kotlin compiler release version<br>- releases can be found here https://github.com/JetBrains/kotlin/releases |
+| `kotlinc.fork`                  | **false**  | if set to **true** will Fork new process for Kotlin compilation                                                                  |
+| `<ext>.kotlinc.fork`            |            | enables extension specific `kotlin.fork` property                                                                                |
+| `kotlinnature.compiler.mode`    | `<blank>`  | internal compilation mode flag, indicates how exactly Kotlin classes will be compiled                                            |
 
 ## How-to use
 

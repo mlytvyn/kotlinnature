@@ -4,41 +4,175 @@
 -->
 <project name="kotlinnature_buildcallbacks">
 
-    <target name="kotlinnature_extension_compile_register" description="Register kotlinnature in the compiling.xml">
-        <replace file="${platformhome}/resources/ant/compiling.xml">
-            <replacetoken><![CDATA[<extension_compile_web extname="@{extname}" />]]></replacetoken>
-            <replacevalue><![CDATA[<extension_compile_web extname="@{extname}"/>
+    <typedef resource="org/jetbrains/kotlin/ant/antlib.xml" classpath="${ext.kotlinnature.path}/lib/kotlin-ant.jar"/>
+
+    <target name="kotlinnature_compile_mode">
+        <kotlinnature_compile_mode mode="${mode}"/>
+    </target>
+
+    <macrodef name="kotlinnature_compile_mode">
+        <attribute name="mode" default=""/>
+        <sequential>
+            <kotlinnature_before_build/>
+
+            <switch value="@{mode}">
+                <case value="after_ext_compile">
+                    <kotlinnature_compile_mode_compiler_adapter_disable/>
+                    <kotlinnature_compile_mode_after_ext_compile_enable/>
+
+                    <replaceregexp file="${ext.kotlinnature.path}/project.properties"
+                                   match="kotlinnature\.compiler\.mode=(.*)"
+                                   replace="kotlinnature\.compiler\.mode=after_ext_compile"
+                                   byline="true"/>
+                    <echo>---------------------------------------------------------------------
+Kotlinnature extension has been switched to `after_ext_compile` mode
+In this mode only Kotlin classes will have visibility to Java classes
+---------------------------------------------------------------------
+</echo>
+                </case>
+                <case value="compiler_adapter">
+                    <kotlinnature_compile_mode_after_ext_compile_disable/>
+                    <kotlinnature_compile_mode_compiler_adapter_enable/>
+
+                    <replaceregexp file="${ext.kotlinnature.path}/project.properties"
+                                   match="kotlinnature\.compiler\.mode=(.*)"
+                                   replace="kotlinnature\.compiler\.mode=compiler_adapter"
+                                   byline="true"/>
+                    <echo>-------------------------------------------------------------------------------
+      Kotlinnature extension has been switched to `compiler_adapter` mode
+In this mode Kotlin classes will have visibility to Java classes and vice-versa
+-------------------------------------------------------------------------------
+                    </echo>
+                </case>
+                <case value="uninstall">
+                    <kotlinnature_compile_mode_after_ext_compile_disable/>
+                    <kotlinnature_compile_mode_compiler_adapter_disable/>
+
+                    <replaceregexp file="${ext.kotlinnature.path}/project.properties"
+                                   match="kotlinnature\.compiler\.mode=(.*)"
+                                   replace="kotlinnature\.compiler\.mode="
+                                   byline="true"/>
+                    <echo>------------------------------------------------------------
+     Kotlinnature extension has been uninstalled.
+ All modifications to OOTB SAP Commerce files were reverted.
+------------------------------------------------------------
+|      Thank you for using `kotlinnature` extension.       |
+------------------------------------------------------------
+                    </echo>
+                </case>
+                <default>
+                    <fail>
+                        Provided mode @{mode} is unsupported. Allowed modes are: `after_ext_compile`, `compiler_adapter`
+                        Example: ant kotlinnature_compile_mode -Dmode=after_ext_compile
+                    </fail>
+                </default>
+            </switch>
+        </sequential>
+    </macrodef>
+
+    <macrodef name="kotlinnature_compile_mode_after_ext_compile_enable">
+        <sequential>
+            <replace file="${platformhome}/resources/ant/compiling.xml">
+                <replacetoken><![CDATA[<extension_compile_web extname="@{extname}" />]]></replacetoken>
+                <replacevalue><![CDATA[<extension_compile_web extname="@{extname}"/>
             <kotlinnature_compile_web extname="@{extname}"/>]]></replacevalue>
-        </replace>
-        <replace file="${platformhome}/resources/ant/compiling.xml">
-            <replacetoken><![CDATA[<extension_compile_core extname="@{extname}" />]]></replacetoken>
-            <replacevalue><![CDATA[<extension_compile_core extname="@{extname}"/>
+            </replace>
+            <replace file="${platformhome}/resources/ant/compiling.xml">
+                <replacetoken><![CDATA[<extension_compile_core extname="@{extname}" />]]></replacetoken>
+                <replacevalue><![CDATA[<extension_compile_core extname="@{extname}"/>
             <kotlinnature_compile_core extname="@{extname}"/>]]></replacevalue>
-        </replace>
+            </replace>
+        </sequential>
+    </macrodef>
 
-        <replace file="${ext.kotlinnature.path}/project.properties">
-            <replacetoken><![CDATA[kotlinnature.extension_compile.extended=false]]></replacetoken>
-            <replacevalue><![CDATA[kotlinnature.extension_compile.extended=true]]></replacevalue>
-        </replace>
-    </target>
-
-    <target name="kotlinnature_extension_compile_unregister" description="Unregister kotlinnature in the compiling.xml">
-        <replace file="${platformhome}/resources/ant/compiling.xml">
-            <replacetoken><![CDATA[<extension_compile_web extname="@{extname}"/>
+    <macrodef name="kotlinnature_compile_mode_after_ext_compile_disable">
+        <sequential>
+            <replace file="${platformhome}/resources/ant/compiling.xml">
+                <replacetoken><![CDATA[<extension_compile_web extname="@{extname}"/>
             <kotlinnature_compile_web extname="@{extname}"/>]]></replacetoken>
-            <replacevalue><![CDATA[<extension_compile_web extname="@{extname}" />]]></replacevalue>
-        </replace>
-        <replace file="${platformhome}/resources/ant/compiling.xml">
-            <replacetoken><![CDATA[<extension_compile_core extname="@{extname}"/>
+                <replacevalue><![CDATA[<extension_compile_web extname="@{extname}" />]]></replacevalue>
+            </replace>
+            <replace file="${platformhome}/resources/ant/compiling.xml">
+                <replacetoken><![CDATA[<extension_compile_core extname="@{extname}"/>
             <kotlinnature_compile_core extname="@{extname}"/>]]></replacetoken>
-            <replacevalue><![CDATA[<extension_compile_core extname="@{extname}" />]]></replacevalue>
-        </replace>
+                <replacevalue><![CDATA[<extension_compile_core extname="@{extname}" />]]></replacevalue>
+            </replace>
+        </sequential>
+    </macrodef>
 
-        <replace file="${ext.kotlinnature.path}/project.properties">
-            <replacetoken><![CDATA[kotlinnature.extension_compile.extended=true]]></replacetoken>
-            <replacevalue><![CDATA[kotlinnature.extension_compile.extended=false]]></replacevalue>
-        </replace>
-    </target>
+    <macrodef name="kotlinnature_compile_mode_compiler_adapter_enable">
+        <sequential>
+            <replace file="${platformhome}/resources/ant/antmacros.xml">
+                <replacetoken><![CDATA[<taskdef name="yjavac" classname="de.hybris.ant.taskdefs.YJavaC">]]></replacetoken>
+                <replacevalue><![CDATA[<taskdef name="yjavac" classname="org.apache.tools.ant.taskdefs.Javac">]]></replacevalue>
+            </replace>
+            <replace file="${platformhome}/resources/ant/compiling.xml">
+                <replacetoken><![CDATA[<include name="src" />]]></replacetoken>
+                <replacevalue><![CDATA[<include name="src"/><include name="kotlinsrc"/>]]></replacevalue>
+            </replace>
+            <replace file="${platformhome}/resources/ant/compiling.xml">
+                <replacetoken><![CDATA[<include name="testsrc" />]]></replacetoken>
+                <replacevalue><![CDATA[<include name="testsrc"/><include name="kotlintestsrc"/>]]></replacevalue>
+            </replace>
+            <replace file="${platformhome}/resources/ant/compiling.xml">
+                <replacetoken><![CDATA[<include name="src/**/*.java" />]]></replacetoken>
+                <replacevalue><![CDATA[<include name="src/**/*.java"/><include name="kotlinsrc/**/*.kt" />]]></replacevalue>
+            </replace>
+            <replace file="${platformhome}/resources/ant/compiling.xml">
+                <replacetoken><![CDATA[<include name="testsrc/**" />]]></replacetoken>
+                <replacevalue><![CDATA[<include name="testsrc/**"/><include name="kotlintestsrc/**" />]]></replacevalue>
+            </replace>
+            <replace file="${platformhome}/resources/ant/util.xml">
+                <replacetoken><![CDATA[<compilerarg line="${standalone.jdkmodulesexports}"/>]]></replacetoken>
+                <replacevalue><![CDATA[<withKotlin/><compilerarg line="${standalone.jdkmodulesexports}" />]]></replacevalue>
+            </replace>
+            <replaceregexp file="${ext.kotlinnature.path}/project.properties"
+                           match="^#build\.compiler=modern$"
+                           replace="build\.compiler=modern"
+                           byline="true"/>
+<!--            <replace file="${ext.kotlinnature.path}/project.properties">-->
+<!--                <replacetoken><![CDATA[#build.compiler=modern]]></replacetoken>-->
+<!--                <replacevalue><![CDATA[build.compiler=modern]]></replacevalue>-->
+<!--            </replace>-->
+        </sequential>
+    </macrodef>
+
+    <macrodef name="kotlinnature_compile_mode_compiler_adapter_disable">
+        <sequential>
+            <replace file="${platformhome}/resources/ant/antmacros.xml">
+                <replacetoken><![CDATA[<taskdef name="yjavac" classname="org.apache.tools.ant.taskdefs.Javac">]]></replacetoken>
+                <replacevalue><![CDATA[<taskdef name="yjavac" classname="de.hybris.ant.taskdefs.YJavaC">]]></replacevalue>
+            </replace>
+            <replace file="${platformhome}/resources/ant/compiling.xml">
+                <replacetoken><![CDATA[<include name="src"/><include name="kotlinsrc"/>]]></replacetoken>
+                <replacevalue><![CDATA[<include name="src" />]]></replacevalue>
+            </replace>
+            <replace file="${platformhome}/resources/ant/compiling.xml">
+                <replacetoken><![CDATA[<include name="testsrc"/><include name="kotlintestsrc"/>]]></replacetoken>
+                <replacevalue><![CDATA[<include name="testsrc" />]]></replacevalue>
+            </replace>
+            <replace file="${platformhome}/resources/ant/compiling.xml">
+                <replacetoken><![CDATA[<include name="src/**/*.java"/><include name="kotlinsrc/**/*.kt" />]]></replacetoken>
+                <replacevalue><![CDATA[<include name="src/**/*.java" />]]></replacevalue>
+            </replace>
+            <replace file="${platformhome}/resources/ant/compiling.xml">
+                <replacetoken><![CDATA[<include name="testsrc/**"/><include name="kotlintestsrc/**/*.kt" />]]></replacetoken>
+                <replacevalue><![CDATA[<include name="testsrc/**" />]]></replacevalue>
+            </replace>
+            <replace file="${platformhome}/resources/ant/util.xml">
+                <replacetoken><![CDATA[<withKotlin/><compilerarg line="${standalone.jdkmodulesexports}" />]]></replacetoken>
+                <replacevalue><![CDATA[<compilerarg line="${standalone.jdkmodulesexports}"/>]]></replacevalue>
+            </replace>
+            <replaceregexp file="${ext.kotlinnature.path}/project.properties"
+                           match="^build\.compiler=modern$"
+                           replace="#build\.compiler=modern"
+                           byline="true"/>
+<!--            <replace file="${ext.kotlinnature.path}/project.properties">-->
+<!--                <replacetoken><![CDATA[build.compiler=modern]]></replacetoken>-->
+<!--                <replacevalue><![CDATA[#build.compiler=modern]]></replacevalue>-->
+<!--            </replace>-->
+        </sequential>
+    </macrodef>
 
     <macrodef name="kotlinnature_before_build">
         <sequential>
@@ -110,31 +244,22 @@
                             <!-- <include name="license"/>-->
                         </fileset>
                     </delete>
+
+                    <typedef resource="org/jetbrains/kotlin/ant/antlib.xml" classpath="${ext.kotlinnature.path}/lib/kotlin-ant.jar"/>
                 </then>
             </if>
         </sequential>
     </macrodef>
 
-    <macrodef name="_after_build">
+    <macrodef name="_before_build">
         <sequential>
             <if>
-                <isfalse value="${kotlinnature.extension_compile.extended}"/>
+                <equals arg1="${kotlinnature.compiler.mode}" arg2=""/>
                 <then>
-                    <foreachext>
-                        <do>
-                            <build_kotlinnature extname="@{extname}"/>
-                        </do>
-                    </foreachext>
+                    <echo message="AAAAA"/>
+                    <kotlinnature_compile_mode mode="compiler_adapter"/>
                 </then>
             </if>
-        </sequential>
-    </macrodef>
-
-    <macrodef name="build_kotlinnature">
-        <attribute name="extname"/>
-        <sequential>
-            <kotlinnature_compile_core extname="@{extname}"/>
-            <kotlinnature_compile_web extname="@{extname}"/>
         </sequential>
     </macrodef>
 
