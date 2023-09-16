@@ -193,7 +193,7 @@ In this mode Kotlin classes will have visibility to Java classes and vice-versa
                             <property name="kotlinc.version" value="${kotlinnature.compiler.version}"/>
                         </then>
                         <else>
-                            <property name="kotlinc.version" value="1.8.21"/>
+                            <property name="kotlinc.version" value="1.9.10"/>
                         </else>
                     </if>
 
