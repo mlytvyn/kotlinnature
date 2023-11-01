@@ -72,12 +72,12 @@ In this mode Kotlin classes will have visibility to Java classes and vice-versa
 
     <macrodef name="kotlinnature_compile_mode_after_ext_compile_enable">
         <sequential>
-            <replace file="${platformhome}/resources/ant/compiling.xml">
+            <replace file="${HYBRIS_BIN_DIR}/platform/resources/ant/compiling.xml">
                 <replacetoken><![CDATA[<extension_compile_web extname="@{extname}" />]]></replacetoken>
                 <replacevalue><![CDATA[<extension_compile_web extname="@{extname}"/>
             <kotlinnature_compile_web extname="@{extname}"/>]]></replacevalue>
             </replace>
-            <replace file="${platformhome}/resources/ant/compiling.xml">
+            <replace file="${HYBRIS_BIN_DIR}/platform/resources/ant/compiling.xml">
                 <replacetoken><![CDATA[<extension_compile_core extname="@{extname}" />]]></replacetoken>
                 <replacevalue><![CDATA[<extension_compile_core extname="@{extname}"/>
             <kotlinnature_compile_core extname="@{extname}"/>]]></replacevalue>
@@ -87,12 +87,12 @@ In this mode Kotlin classes will have visibility to Java classes and vice-versa
 
     <macrodef name="kotlinnature_compile_mode_after_ext_compile_disable">
         <sequential>
-            <replace file="${platformhome}/resources/ant/compiling.xml">
+            <replace file="${HYBRIS_BIN_DIR}/platform/resources/ant/compiling.xml">
                 <replacetoken><![CDATA[<extension_compile_web extname="@{extname}"/>
             <kotlinnature_compile_web extname="@{extname}"/>]]></replacetoken>
                 <replacevalue><![CDATA[<extension_compile_web extname="@{extname}" />]]></replacevalue>
             </replace>
-            <replace file="${platformhome}/resources/ant/compiling.xml">
+            <replace file="${HYBRIS_BIN_DIR}/platform/resources/ant/compiling.xml">
                 <replacetoken><![CDATA[<extension_compile_core extname="@{extname}"/>
             <kotlinnature_compile_core extname="@{extname}"/>]]></replacetoken>
                 <replacevalue><![CDATA[<extension_compile_core extname="@{extname}" />]]></replacevalue>
@@ -102,27 +102,27 @@ In this mode Kotlin classes will have visibility to Java classes and vice-versa
 
     <macrodef name="kotlinnature_compile_mode_compiler_adapter_enable">
         <sequential>
-            <replace file="${platformhome}/resources/ant/antmacros.xml">
+            <replace file="${HYBRIS_BIN_DIR}/platform/resources/ant/antmacros.xml">
                 <replacetoken><![CDATA[<taskdef name="yjavac" classname="de.hybris.ant.taskdefs.YJavaC">]]></replacetoken>
                 <replacevalue><![CDATA[<taskdef name="yjavac" classname="org.apache.tools.ant.taskdefs.Javac">]]></replacevalue>
             </replace>
-            <replace file="${platformhome}/resources/ant/compiling.xml">
+            <replace file="${HYBRIS_BIN_DIR}/platform/resources/ant/compiling.xml">
                 <replacetoken><![CDATA[<include name="src" />]]></replacetoken>
                 <replacevalue><![CDATA[<include name="src"/><include name="kotlinsrc"/>]]></replacevalue>
             </replace>
-            <replace file="${platformhome}/resources/ant/compiling.xml">
+            <replace file="${HYBRIS_BIN_DIR}/platform/resources/ant/compiling.xml">
                 <replacetoken><![CDATA[<include name="testsrc" />]]></replacetoken>
                 <replacevalue><![CDATA[<include name="testsrc"/><include name="kotlintestsrc"/>]]></replacevalue>
             </replace>
-            <replace file="${platformhome}/resources/ant/compiling.xml">
+            <replace file="${HYBRIS_BIN_DIR}/platform/resources/ant/compiling.xml">
                 <replacetoken><![CDATA[<include name="src/**/*.java" />]]></replacetoken>
                 <replacevalue><![CDATA[<include name="src/**/*.java"/><include name="kotlinsrc/**/*.kt" />]]></replacevalue>
             </replace>
-            <replace file="${platformhome}/resources/ant/compiling.xml">
+            <replace file="${HYBRIS_BIN_DIR}/platform/resources/ant/compiling.xml">
                 <replacetoken><![CDATA[<include name="testsrc/**" />]]></replacetoken>
                 <replacevalue><![CDATA[<include name="testsrc/**"/><include name="kotlintestsrc/**" />]]></replacevalue>
             </replace>
-            <replace file="${platformhome}/resources/ant/util.xml">
+            <replace file="${HYBRIS_BIN_DIR}/platform/resources/ant/util.xml">
                 <replacetoken><![CDATA[<compilerarg line="${standalone.jdkmodulesexports}"/>]]></replacetoken>
                 <replacevalue><![CDATA[<withKotlin/><compilerarg line="${standalone.jdkmodulesexports}" />]]></replacevalue>
             </replace>
@@ -139,27 +139,27 @@ In this mode Kotlin classes will have visibility to Java classes and vice-versa
 
     <macrodef name="kotlinnature_compile_mode_compiler_adapter_disable">
         <sequential>
-            <replace file="${platformhome}/resources/ant/antmacros.xml">
+            <replace file="${HYBRIS_BIN_DIR}/platform/resources/ant/antmacros.xml">
                 <replacetoken><![CDATA[<taskdef name="yjavac" classname="org.apache.tools.ant.taskdefs.Javac">]]></replacetoken>
                 <replacevalue><![CDATA[<taskdef name="yjavac" classname="de.hybris.ant.taskdefs.YJavaC">]]></replacevalue>
             </replace>
-            <replace file="${platformhome}/resources/ant/compiling.xml">
+            <replace file="${HYBRIS_BIN_DIR}/platform/resources/ant/compiling.xml">
                 <replacetoken><![CDATA[<include name="src"/><include name="kotlinsrc"/>]]></replacetoken>
                 <replacevalue><![CDATA[<include name="src" />]]></replacevalue>
             </replace>
-            <replace file="${platformhome}/resources/ant/compiling.xml">
+            <replace file="${HYBRIS_BIN_DIR}/platform/resources/ant/compiling.xml">
                 <replacetoken><![CDATA[<include name="testsrc"/><include name="kotlintestsrc"/>]]></replacetoken>
                 <replacevalue><![CDATA[<include name="testsrc" />]]></replacevalue>
             </replace>
-            <replace file="${platformhome}/resources/ant/compiling.xml">
+            <replace file="${HYBRIS_BIN_DIR}/platform/resources/ant/compiling.xml">
                 <replacetoken><![CDATA[<include name="src/**/*.java"/><include name="kotlinsrc/**/*.kt" />]]></replacetoken>
                 <replacevalue><![CDATA[<include name="src/**/*.java" />]]></replacevalue>
             </replace>
-            <replace file="${platformhome}/resources/ant/compiling.xml">
+            <replace file="${HYBRIS_BIN_DIR}/platform/resources/ant/compiling.xml">
                 <replacetoken><![CDATA[<include name="testsrc/**"/><include name="kotlintestsrc/**/*.kt" />]]></replacetoken>
                 <replacevalue><![CDATA[<include name="testsrc/**" />]]></replacevalue>
             </replace>
-            <replace file="${platformhome}/resources/ant/util.xml">
+            <replace file="${HYBRIS_BIN_DIR}/platform/resources/ant/util.xml">
                 <replacetoken><![CDATA[<withKotlin/><compilerarg line="${standalone.jdkmodulesexports}" />]]></replacetoken>
                 <replacevalue><![CDATA[<compilerarg line="${standalone.jdkmodulesexports}"/>]]></replacevalue>
             </replace>
