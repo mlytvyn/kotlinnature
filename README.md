@@ -1,6 +1,8 @@
 Kotlin nature extension for SAP Commerce Cloud (Hybris)
 =====================
 
+> Vote for feature - https://influence.sap.com/sap/ino/#/idea/320948
+
 ## Purpose
 
 Thanks to advanced pluggability of the SAP Commerce, it is possible to enable an alternative language which can be run
