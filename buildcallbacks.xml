@@ -102,6 +102,10 @@ In this mode Kotlin classes will have visibility to Java classes and vice-versa
 
     <macrodef name="kotlinnature_compile_mode_compiler_adapter_enable">
         <sequential>
+            <replace file="${HYBRIS_BIN_DIR}/platform/resources/ant/antmacros.xml">
+                <replacetoken><![CDATA[<taskdef name="yjavac" classname="de.hybris.ant.taskdefs.YJavaC">]]></replacetoken>
+                <replacevalue><![CDATA[<taskdef name="yjavac" classname="org.apache.tools.ant.taskdefs.Javac">]]></replacevalue>
+            </replace>
             <replace file="${HYBRIS_BIN_DIR}/platform/resources/ant/compiling.xml">
                 <replacetoken><![CDATA[<include name="src" />]]></replacetoken>
                 <replacevalue><![CDATA[<include name="src" /><include name="kotlinsrc" />]]></replacevalue>
@@ -139,6 +143,10 @@ In this mode Kotlin classes will have visibility to Java classes and vice-versa
 
     <macrodef name="kotlinnature_compile_mode_compiler_adapter_disable">
         <sequential>
+            <replace file="${HYBRIS_BIN_DIR}/platform/resources/ant/antmacros.xml">
+                <replacetoken><![CDATA[<taskdef name="yjavac" classname="org.apache.tools.ant.taskdefs.Javac">]]></replacetoken>
+                <replacevalue><![CDATA[<taskdef name="yjavac" classname="de.hybris.ant.taskdefs.YJavaC">]]></replacevalue>
+            </replace>
             <replace file="${HYBRIS_BIN_DIR}/platform/resources/ant/compiling.xml">
                 <replacetoken><![CDATA[<include name="src" /><include name="kotlinsrc" />]]></replacetoken>
                 <replacevalue><![CDATA[<include name="src" />]]></replacevalue>
