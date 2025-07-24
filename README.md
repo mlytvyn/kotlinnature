@@ -1,4 +1,4 @@
-Kotlin nature extension for SAP Commerce Cloud (Hybris)
+Kotlin nature extension for SAP Commerce (Hybris)
 =====================
 
 > Vote for feature - https://influence.sap.com/sap/ino/#/idea/320948
@@ -53,7 +53,7 @@ This build target provides possibility to adjust how `kotlinnature` compilation 
 
 | Property                        | Default    | Description                                                                                                                      |
 |---------------------------------|------------|----------------------------------------------------------------------------------------------------------------------------------|
-| `kotlinnature.compiler.version` | **1.9.10** | must point to valid Kotlin compiler release version<br>- releases can be found here https://github.com/JetBrains/kotlin/releases |
+| `kotlinnature.compiler.version` | **2.2.0** | must point to valid Kotlin compiler release version<br>- releases can be found here https://github.com/JetBrains/kotlin/releases |
 | `kotlinc.fork`                  | **false**  | if set to **true** will Fork new process for Kotlin compilation                                                                  |
 | `<ext>.kotlinc.fork`            |            | enables extension specific `kotlin.fork` property                                                                                |
 | `kotlinnature.compiler.mode`    | `<blank>`  | internal compilation mode flag, indicates how exactly Kotlin classes will be compiled                                            |
