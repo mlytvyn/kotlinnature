@@ -24,6 +24,10 @@ It is possible to change version of Kotlin compiler via `local.properties` witho
 the `kotlinnature` extension. Kotlin compiler will be automatically downloaded from the JetBrains GitHub,
 if `kotlin-ant.jar` is not present in the `kotlinnature/lib` directory.
 
+`kostlinnature` will auto-register itself and modify OOTB Ant files (e.g. `compiling.xml`) during the first build.
+`platform/resources/advanced.properties` file will be modified with two new properties `kotlinnature_compile_mode` &
+`build.compiler`.
+
 ### Available targets
 
 #### `kotlinnature_compile_mode`
@@ -36,6 +40,14 @@ This build target provides possibility to adjust how `kotlinnature` compilation 
 | `after_ext_compile` | Alternative compilation mode, similar to OOTB Groovy compilation. It will compile Kotlin classes after compilation of the Java classes. In this mode only Kotlin classes will have visibility to Java classes |
 | `uninstall`         | Special mode, which will undo any modifications to OOTB files (`compiling.xml`, `antmacros.xml`, `util.xml`)                                                                                                  |
 | `<blank>`           | No value, initial state. Indicates that there are no changes to OOTB files.                                                                                                                                   |
+
+Adjust integration and compilation mode:
+
+```shell
+ant kotlinnature_compile_mode -Dmode=compiler_adapter
+ant kotlinnature_compile_mode -Dmode=after_ext_compile
+ant kotlinnature_compile_mode -Dmode=uninstall
+```
 
 ### Available macrodefs
 
@@ -63,9 +75,8 @@ This build target provides possibility to adjust how `kotlinnature` compilation 
 - Checkout this repository and integrate into your project, preferably as a GIT submodule
 - Add new `kotlinnature` extension dependency in `localextensions.xml` file
 - Adjust project's `.gitignore` file to ignore `kotlinnature` completely
-- Ensure that you're using latest version of
-  the [SAP Commerce Developers Toolset plugin](https://plugins.jetbrains.com/plugin/12867-sap-commerce-developers-toolset)
-  for Intellij IDEA, as it will automatically register both `kotlinsrc` and `kotlintestsrc` as source directories
+- Ensure that you're using latest version of the [SAP Commerce Developers Toolset plugin](https://plugins.jetbrains.com/plugin/12867-sap-commerce-developers-toolset) for IntelliJ IDEA, as it will automatically register both
+  `kotlinsrc` and `kotlintestsrc` as source directories
 
 ## Tips & tricks
 

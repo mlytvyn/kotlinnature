@@ -15,50 +15,53 @@
         <sequential>
             <kotlinnature_before_build/>
 
+            <!-- Always remove kotlinnature block before any action -->
+            <replaceregexp file="${platformhome}/resources/advanced.properties"
+                    byline="false"
+                    match="(?s)# kotlinnature_start.*?# kotlinnature_end\s*"
+                    replace=""/>
+
             <switch value="@{mode}">
                 <case value="after_ext_compile">
                     <kotlinnature_compile_mode_compiler_adapter_disable/>
                     <kotlinnature_compile_mode_after_ext_compile_enable/>
 
-                    <replaceregexp file="${ext.kotlinnature.path}/project.properties"
-                                   match="kotlinnature\.compiler\.mode=(.*)"
-                                   replace="kotlinnature\.compiler\.mode=after_ext_compile"
-                                   byline="true"/>
-                    <echo>---------------------------------------------------------------------
-Kotlinnature extension has been switched to `after_ext_compile` mode
-In this mode only Kotlin classes will have visibility to Java classes
----------------------------------------------------------------------
-</echo>
+                    <!-- Append block only if marker not present -->
+                    <echo file="${platformhome}/resources/advanced.properties" append="true"># kotlinnature_start
+                        kotlinnature.compiler.mode=after_ext_compile
+                        build.compiler=modern
+                        # kotlinnature_end
+                    </echo>
+                    <echo level="info" message="---------------------------------------------------------------------"/>
+                    <echo level="warning" message="     kotlinnature extension has been switched to `after_ext_compile` mode"/>
+                    <echo level="warning" message=" In this mode only Kotlin classes will have visibility to Java classes"/>
+                    <echo level="info" message="---------------------------------------------------------------------"/>
                 </case>
                 <case value="compiler_adapter">
                     <kotlinnature_compile_mode_after_ext_compile_disable/>
                     <kotlinnature_compile_mode_compiler_adapter_enable/>
 
-                    <replaceregexp file="${ext.kotlinnature.path}/project.properties"
-                                   match="kotlinnature\.compiler\.mode=(.*)"
-                                   replace="kotlinnature\.compiler\.mode=compiler_adapter"
-                                   byline="true"/>
-                    <echo>-------------------------------------------------------------------------------
-      Kotlinnature extension has been switched to `compiler_adapter` mode
-In this mode Kotlin classes will have visibility to Java classes and vice-versa
--------------------------------------------------------------------------------
+                    <!-- Append block only if marker not present -->
+                    <echo file="${platformhome}/resources/advanced.properties" append="true"># kotlinnature_start
+                        kotlinnature.compiler.mode=compiler_adapter
+                        build.compiler=modern
+                        # kotlinnature_end
                     </echo>
+                    <echo level="info" message="-------------------------------------------------------------------------------"/>
+                    <echo level="warning" message="     kotlinnature extension has been switched to `compiler_adapter` mode"/>
+                    <echo level="warning" message=" In this mode Kotlin classes will have visibility to Java classes and vice-versa"/>
+                    <echo level="info" message="-------------------------------------------------------------------------------"/>
                 </case>
                 <case value="uninstall">
                     <kotlinnature_compile_mode_after_ext_compile_disable/>
                     <kotlinnature_compile_mode_compiler_adapter_disable/>
 
-                    <replaceregexp file="${ext.kotlinnature.path}/project.properties"
-                                   match="kotlinnature\.compiler\.mode=(.*)"
-                                   replace="kotlinnature\.compiler\.mode="
-                                   byline="true"/>
-                    <echo>------------------------------------------------------------
-     Kotlinnature extension has been uninstalled.
- All modifications to OOTB SAP Commerce files were reverted.
-------------------------------------------------------------
-|      Thank you for using `kotlinnature` extension.       |
-------------------------------------------------------------
-                    </echo>
+                    <echo level="info" message="------------------------------------------------------------"/>
+                    <echo level="warning" message="     kotlinnature extension has been uninstalled."/>
+                    <echo level="warning" message=" All modifications to OOTB SAP Commerce files were reverted."/>
+                    <echo level="info" message="------------------------------------------------------------"/>
+                    <echo level="warning" message="|      Thank you for using `kotlinnature` extension.       |"/>
+                    <echo level="info" message="------------------------------------------------------------"/>
                 </case>
                 <default>
                     <fail>
@@ -126,14 +129,14 @@ In this mode Kotlin classes will have visibility to Java classes and vice-versa
                 <replacetoken><![CDATA[<compilerarg line="${standalone.jdkmodulesexports}"/>]]></replacetoken>
                 <replacevalue><![CDATA[<withKotlin/><compilerarg line="${standalone.jdkmodulesexports}" />]]></replacevalue>
             </replace>
-            <replaceregexp file="${ext.kotlinnature.path}/project.properties"
-                           match="^#build\.compiler=modern$"
-                           replace="build\.compiler=modern"
-                           byline="true"/>
-<!--            <replace file="${ext.kotlinnature.path}/project.properties">-->
-<!--                <replacetoken><![CDATA[#build.compiler=modern]]></replacetoken>-->
-<!--                <replacevalue><![CDATA[build.compiler=modern]]></replacevalue>-->
-<!--            </replace>-->
+            <!--            <replaceregexp file="${platformhome}/resources/advanced.properties"-->
+            <!--                           match="^#build\.compiler=modern$"-->
+            <!--                           replace="build\.compiler=modern"-->
+            <!--                           byline="true"/>-->
+            <!--            <replace file="${ext.kotlinnature.path}/project.properties">-->
+            <!--                <replacetoken><![CDATA[#build.compiler=modern]]></replacetoken>-->
+            <!--                <replacevalue><![CDATA[build.compiler=modern]]></replacevalue>-->
+            <!--            </replace>-->
         </sequential>
     </macrodef>
 
@@ -156,21 +159,21 @@ In this mode Kotlin classes will have visibility to Java classes and vice-versa
                 <replacevalue><![CDATA[<include name="src/**/*.java" />]]></replacevalue>
             </replace>
             <replace file="${HYBRIS_BIN_DIR}/platform/resources/ant/compiling.xml">
-                <replacetoken><![CDATA[<include name="testsrc/**"/><include name="kotlintestsrc/**/*.kt" />]]></replacetoken>
+                <replacetoken><![CDATA[<include name="testsrc/**"/><include name="kotlintestsrc/**" />]]></replacetoken>
                 <replacevalue><![CDATA[<include name="testsrc/**" />]]></replacevalue>
             </replace>
             <replace file="${HYBRIS_BIN_DIR}/platform/resources/ant/util.xml">
                 <replacetoken><![CDATA[<withKotlin/><compilerarg line="${standalone.jdkmodulesexports}" />]]></replacetoken>
                 <replacevalue><![CDATA[<compilerarg line="${standalone.jdkmodulesexports}"/>]]></replacevalue>
             </replace>
-            <replaceregexp file="${ext.kotlinnature.path}/project.properties"
-                           match="^build\.compiler=modern$"
-                           replace="#build\.compiler=modern"
-                           byline="true"/>
-<!--            <replace file="${ext.kotlinnature.path}/project.properties">-->
-<!--                <replacetoken><![CDATA[build.compiler=modern]]></replacetoken>-->
-<!--                <replacevalue><![CDATA[#build.compiler=modern]]></replacevalue>-->
-<!--            </replace>-->
+            <!--            <replaceregexp file="${platformhome}/resources/advanced.properties"-->
+            <!--                           match="^build\.compiler=modern$"-->
+            <!--                           replace="#build\.compiler=modern"-->
+            <!--                           byline="true"/>-->
+            <!--            <replace file="${ext.kotlinnature.path}/project.properties">-->
+            <!--                <replacetoken><![CDATA[build.compiler=modern]]></replacetoken>-->
+            <!--                <replacevalue><![CDATA[#build.compiler=modern]]></replacevalue>-->
+            <!--            </replace>-->
         </sequential>
     </macrodef>
 
@@ -245,7 +248,8 @@ In this mode Kotlin classes will have visibility to Java classes and vice-versa
                         </fileset>
                     </delete>
 
-                    <typedef resource="org/jetbrains/kotlin/ant/antlib.xml" classpath="${ext.kotlinnature.path}/lib/kotlin-ant.jar"/>
+                    <typedef resource="org/jetbrains/kotlin/ant/antlib.xml"
+                            classpath="${ext.kotlinnature.path}/lib/kotlin-ant.jar"/>
                 </then>
             </if>
         </sequential>
@@ -253,11 +257,23 @@ In this mode Kotlin classes will have visibility to Java classes and vice-versa
 
     <macrodef name="_before_build">
         <sequential>
+            <loadfile property="advanced.content" srcFile="${platformhome}/resources/advanced.properties"/>
+
             <if>
-                <equals arg1="${kotlinnature.compiler.mode}" arg2=""/>
+                <not>
+                    <contains string="${advanced.content}" substring="# kotlinnature_start"/>
+                </not>
                 <then>
                     <kotlinnature_compile_mode mode="compiler_adapter"/>
                 </then>
+                <else>
+                    <echo level="info" message="------------------------------------------------------------"/>
+                    <echo level="warning" message="     kotlinnature extension is installed."/>
+                    <echo level="warning" message=" Kotlin integration and compiler mode: ${kotlinnature.compiler.mode}"/>
+                    <echo level="info" message="------------------------------------------------------------"/>
+                    <echo level="warning" message="|      Thank you for using `kotlinnature` extension.       |"/>
+                    <echo level="info" message="------------------------------------------------------------"/>
+                </else>
             </if>
         </sequential>
     </macrodef>
