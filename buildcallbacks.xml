@@ -270,7 +270,7 @@
 
     <macrodef name="_before_build">
         <sequential>
-            <loadfile property="advanced.content" srcFile="${HYBRIS_BIN_DIR}/resources/advanced.properties"/>
+            <loadfile property="advanced.content" srcFile="${HYBRIS_BIN_DIR}/platform/resources/advanced.properties"/>
 
             <if>
                 <not>
