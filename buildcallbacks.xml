@@ -1,7 +1,20 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!--
- Copyright (c) 2021 SAP SE or an SAP affiliate company. All rights reserved.
--->
+  ~ [y] SAP Commerce Cloud
+  ~
+  ~ Copyright (c) 2026-2026 Canadian Tires Corporation (CTC) and Mark's Commercial (MC)
+  ~ All Rights Reserved.
+  ~
+  ~ Suppliers:
+  ~  - EPAM Systems
+  ~
+  ~ This software is the confidential and proprietary information of CTC, MC and its suppliers, if any.
+  ~ The intellectual and technical concepts contained herein are proprietary to CTC, MC
+  ~ and its suppliers and may be covered by Patents, patents in process,
+  ~ and are protected by trade secret or copyright law.
+  ~ Dissemination of this information or reproduction of this material
+  ~ is strictly forbidden unless prior written permission is obtained from CTC, MC.
+  -->
 <project name="kotlinnature_buildcallbacks">
 
     <typedef resource="org/jetbrains/kotlin/ant/antlib.xml" classpath="${ext.kotlinnature.path}/lib/kotlin-ant.jar"/>
@@ -16,7 +29,7 @@
             <kotlinnature_before_build/>
 
             <!-- Always remove kotlinnature block before any action -->
-            <replaceregexp file="${platformhome}/resources/advanced.properties"
+            <replaceregexp file="${HYBRIS_BIN_DIR}/platform/resources/advanced.properties"
                     byline="false"
                     match="(?s)# kotlinnature_start.*?# kotlinnature_end\s*"
                     replace=""/>
@@ -27,7 +40,7 @@
                     <kotlinnature_compile_mode_after_ext_compile_enable/>
 
                     <!-- Append block only if marker not present -->
-                    <echo file="${platformhome}/resources/advanced.properties" append="true"># kotlinnature_start
+                    <echo file="${HYBRIS_BIN_DIR}/platform/resources/advanced.properties" append="true"># kotlinnature_start
                         kotlinnature.compiler.mode=after_ext_compile
                         build.compiler=modern
                         # kotlinnature_end
@@ -42,7 +55,7 @@
                     <kotlinnature_compile_mode_compiler_adapter_enable/>
 
                     <!-- Append block only if marker not present -->
-                    <echo file="${platformhome}/resources/advanced.properties" append="true"># kotlinnature_start
+                    <echo file="${HYBRIS_BIN_DIR}/platform/resources/advanced.properties" append="true"># kotlinnature_start
                         kotlinnature.compiler.mode=compiler_adapter
                         build.compiler=modern
                         # kotlinnature_end
@@ -129,7 +142,7 @@
                 <replacetoken><![CDATA[<compilerarg line="${standalone.jdkmodulesexports}"/>]]></replacetoken>
                 <replacevalue><![CDATA[<withKotlin/><compilerarg line="${standalone.jdkmodulesexports}" />]]></replacevalue>
             </replace>
-            <!--            <replaceregexp file="${platformhome}/resources/advanced.properties"-->
+            <!--            <replaceregexp file="${HYBRIS_BIN_DIR}/platform/resources/advanced.properties"-->
             <!--                           match="^#build\.compiler=modern$"-->
             <!--                           replace="build\.compiler=modern"-->
             <!--                           byline="true"/>-->
@@ -166,7 +179,7 @@
                 <replacetoken><![CDATA[<withKotlin/><compilerarg line="${standalone.jdkmodulesexports}" />]]></replacetoken>
                 <replacevalue><![CDATA[<compilerarg line="${standalone.jdkmodulesexports}"/>]]></replacevalue>
             </replace>
-            <!--            <replaceregexp file="${platformhome}/resources/advanced.properties"-->
+            <!--            <replaceregexp file="${HYBRIS_BIN_DIR}/platform/resources/advanced.properties"-->
             <!--                           match="^build\.compiler=modern$"-->
             <!--                           replace="#build\.compiler=modern"-->
             <!--                           byline="true"/>-->
@@ -257,7 +270,7 @@
 
     <macrodef name="_before_build">
         <sequential>
-            <loadfile property="advanced.content" srcFile="${platformhome}/resources/advanced.properties"/>
+            <loadfile property="advanced.content" srcFile="${HYBRIS_BIN_DIR}/resources/advanced.properties"/>
 
             <if>
                 <not>
