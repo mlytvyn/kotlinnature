@@ -3,6 +3,11 @@ Kotlin nature extension for SAP Commerce (Hybris)
 
 > Vote for feature - https://influence.sap.com/sap/ino/#/idea/320948
 
+----
+> IMPORTANT NOTE: since Kotlin 2.3.0 Ant build system is not supported anymore. It seems that only SAP can bring Kotlin to SAP Commerce.
+> https://kotlinlang.org/docs/whatsnew23.html#documentation-updates.
+----
+
 ## Purpose
 
 Thanks to advanced pluggability of the SAP Commerce, it is possible to enable an alternative language which can be run
